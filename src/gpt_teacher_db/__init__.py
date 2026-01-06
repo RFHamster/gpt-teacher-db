@@ -1,0 +1,1 @@
+from gpt_teacher_db import gpt_teacher

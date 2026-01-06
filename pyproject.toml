@@ -1,0 +1,35 @@
+[project]
+name = "gpt-teacher-db"
+version = "0.1.0"
+description = "GPT Teacher database models and migrations"
+readme = "README.md"
+authors = [
+    { name = "Pablo Bispo", email = "pablofernando@live.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "alembic-postgresql-enum>=1.7.0",
+    "langchain-core>=0.3.75",
+    "psycopg>=3.2.9",
+    "psycopg-binary>=3.2.9",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.0",
+    "pytz>=2025.2",
+    "requests>=2.32.4",
+    "sqlmodel>=0.0.24",
+]
+
+[dependency-groups]
+dev = [
+    "alembic>=1.16.1",
+    "alembic-postgresql-enum>=1.7.0",
+    "psycopg-binary>=3.2.9",
+    "pytest-alembic>=0.12.1",
+    "pytest-mock-resources[docker]>=2.12.2",
+    "sqlalchemy-utils>=0.42.0",
+]
+
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
