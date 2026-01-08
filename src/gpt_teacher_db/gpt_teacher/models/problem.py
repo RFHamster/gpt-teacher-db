@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy import Column
 from sqlmodel import Field, Relationship
 
-from gpt_teacher_db.gpt_teacher.core import BaseModelGPTTeacher_
+from gpt_teacher_db.gpt_teacher.core import BaseModelGPTTeacher_, SQLModelGPTTeacher
 from gpt_teacher_db.gpt_teacher.metadata import (
     DEFAULT_SCHEMA_NAME,
     PROBLEM_TABLE,
@@ -15,11 +15,23 @@ from gpt_teacher_db.gpt_teacher.metadata import (
 
 if TYPE_CHECKING:
     from gpt_teacher_db.gpt_teacher.models.classroom import Classroom
-    from gpt_teacher_db.gpt_teacher.models.session import Session
+    from gpt_teacher_db.gpt_teacher.models.student_session import StudentSession
     from gpt_teacher_db.gpt_teacher.models.student import Student
 
 
-class Problem(BaseModelGPTTeacher_, table=True):
+# Shared properties
+class ProblemBase(SQLModelGPTTeacher):
+    """Base model with common problem properties"""
+
+    classroom_id: UUID
+    title: str = Field(max_length=255)
+    description: Optional[str] = None
+    file_path: Optional[str] = Field(default=None, max_length=500)
+    is_sandbox: bool = Field(default=False)
+    created_by_student_id: Optional[UUID] = None
+
+
+class Problem(ProblemBase, BaseModelGPTTeacher_, table=True):
     """Programming problem/exercise defined by teacher or created by student (sandbox)"""
 
     __tablename__ = PROBLEM_TABLE
@@ -30,17 +42,8 @@ class Problem(BaseModelGPTTeacher_, table=True):
         nullable=False,
         index=True,
     )
-    title: str = Field(max_length=255, nullable=False)
     description: Optional[str] = Field(
         default=None, sa_column=Column(sa.Text, nullable=True)
-    )
-    file_path: Optional[str] = Field(
-        default=None, max_length=500, description="Path to PDF or other files"
-    )
-    is_sandbox: bool = Field(
-        default=False,
-        nullable=False,
-        description="True if created by student for triage",
     )
     created_by_student_id: Optional[UUID] = Field(
         default=None,
@@ -54,4 +57,30 @@ class Problem(BaseModelGPTTeacher_, table=True):
     created_by_student: Optional["Student"] = Relationship(
         back_populates="sandbox_problems"
     )
-    sessions: list["Session"] = Relationship(back_populates="problem")
+    sessions: list["StudentSession"] = Relationship(back_populates="problem")
+
+
+# Properties to receive on creation
+class ProblemCreate(ProblemBase):
+    """Model for creating a new problem"""
+
+    pass
+
+
+# Properties to receive on update
+class ProblemUpdate(SQLModelGPTTeacher):
+    """Model for updating a problem"""
+
+    classroom_id: Optional[UUID] = Field(default=None)
+    title: Optional[str] = Field(default=None, max_length=255)
+    description: Optional[str] = Field(default=None)
+    file_path: Optional[str] = Field(default=None, max_length=500)
+    is_sandbox: Optional[bool] = Field(default=None)
+    created_by_student_id: Optional[UUID] = Field(default=None)
+
+
+# Properties to return via API
+class ProblemPublic(ProblemBase):
+    """Model for returning problem data"""
+
+    id: UUID

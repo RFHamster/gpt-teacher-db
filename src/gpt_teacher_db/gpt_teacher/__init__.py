@@ -7,8 +7,8 @@ from gpt_teacher_db.gpt_teacher.models.student import Student
 from gpt_teacher_db.gpt_teacher.models.classroom import Classroom
 from gpt_teacher_db.gpt_teacher.models.classroom_student import ClassroomStudent
 from gpt_teacher_db.gpt_teacher.models.problem import Problem
-from gpt_teacher_db.gpt_teacher.models.session import Session
-from gpt_teacher_db.gpt_teacher.models.message import Message
+from gpt_teacher_db.gpt_teacher.models.student_session import StudentSession
+from gpt_teacher_db.gpt_teacher.models.chat_message import ChatMessage
 from gpt_teacher_db.gpt_teacher.models.consolidated import Consolidated
 
 # Import DTOs
@@ -24,8 +24,8 @@ __all__ = [
     "Classroom",
     "ClassroomStudent",
     "Problem",
-    "Session",
-    "Message",
+    "StudentSession",
+    "ChatMessage",
     "Consolidated",
     "ConsolidatedData",
     "SessionStatus",

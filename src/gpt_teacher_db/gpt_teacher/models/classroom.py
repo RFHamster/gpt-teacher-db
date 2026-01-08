@@ -1,9 +1,9 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
 from sqlmodel import Field, Relationship
 
-from gpt_teacher_db.gpt_teacher.core import BaseModelGPTTeacher_
+from gpt_teacher_db.gpt_teacher.core import BaseModelGPTTeacher_, SQLModelGPTTeacher
 from gpt_teacher_db.gpt_teacher.metadata import (
     DEFAULT_SCHEMA_NAME,
     CLASSROOM_TABLE,
@@ -16,7 +16,15 @@ if TYPE_CHECKING:
     from gpt_teacher_db.gpt_teacher.models.teacher import Teacher
 
 
-class Classroom(BaseModelGPTTeacher_, table=True):
+# Shared properties
+class ClassroomBase(SQLModelGPTTeacher):
+    """Base model with common classroom properties"""
+
+    name: str = Field(max_length=255)
+    teacher_id: UUID
+
+
+class Classroom(ClassroomBase, BaseModelGPTTeacher_, table=True):
     """Classroom grouping students under a teacher's responsibility"""
 
     __tablename__ = CLASSROOM_TABLE
@@ -27,7 +35,6 @@ class Classroom(BaseModelGPTTeacher_, table=True):
         nullable=False,
         index=True,
     )
-    name: str = Field(max_length=255, nullable=False)
 
     # Relationships
     teacher: "Teacher" = Relationship(back_populates="classrooms")
@@ -35,3 +42,25 @@ class Classroom(BaseModelGPTTeacher_, table=True):
         back_populates="classroom"
     )
     problems: list["Problem"] = Relationship(back_populates="classroom")
+
+
+# Properties to receive on creation
+class ClassroomCreate(ClassroomBase):
+    """Model for creating a new classroom"""
+
+    pass
+
+
+# Properties to receive on update
+class ClassroomUpdate(SQLModelGPTTeacher):
+    """Model for updating a classroom"""
+
+    name: Optional[str] = Field(default=None, max_length=255)
+    teacher_id: Optional[UUID] = Field(default=None)
+
+
+# Properties to return via API
+class ClassroomPublic(ClassroomBase):
+    """Model for returning classroom data"""
+
+    id: UUID
