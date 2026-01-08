@@ -27,7 +27,7 @@ class Student(StudentBase, BaseModelGPTTeacher_, table=True):
     __tablename__ = STUDENT_TABLE
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    password_hash: str = Field(max_length=255, nullable=False)
+    hashed_password: str = Field(max_length=255, nullable=False)
 
     # Relationships
     classroom_students: list["ClassroomStudent"] = Relationship(

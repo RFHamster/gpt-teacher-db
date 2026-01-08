@@ -24,7 +24,7 @@ class Teacher(TeacherBase, BaseModelGPTTeacher_, table=True):
     __tablename__ = TEACHER_TABLE
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
-    password_hash: str = Field(max_length=255, nullable=False)
+    hashed_password: str = Field(max_length=255, nullable=False)
 
     # Relationships
     classrooms: list["Classroom"] = Relationship(back_populates="teacher")
