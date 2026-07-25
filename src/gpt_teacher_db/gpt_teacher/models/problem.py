@@ -26,6 +26,7 @@ class ProblemBase(SQLModelGPTTeacher):
     classroom_id: UUID
     title: str = Field(max_length=255)
     description: Optional[str] = None
+    category: Optional[str] = Field(default=None, max_length=100)
     file_path: Optional[str] = Field(default=None, max_length=500)
     is_sandbox: bool = Field(default=False)
     created_by_student_id: Optional[UUID] = None
@@ -44,6 +45,10 @@ class Problem(ProblemBase, BaseModelGPTTeacher_, table=True):
     )
     description: Optional[str] = Field(
         default=None, sa_column=Column(sa.Text, nullable=True)
+    )
+    category: Optional[str] = Field(
+        default=None,
+        sa_column=Column(sa.String(100), nullable=True, index=True),
     )
     created_by_student_id: Optional[UUID] = Field(
         default=None,
@@ -74,6 +79,7 @@ class ProblemUpdate(SQLModelGPTTeacher):
     classroom_id: Optional[UUID] = Field(default=None)
     title: Optional[str] = Field(default=None, max_length=255)
     description: Optional[str] = Field(default=None)
+    category: Optional[str] = Field(default=None, max_length=100)
     file_path: Optional[str] = Field(default=None, max_length=500)
     is_sandbox: Optional[bool] = Field(default=None)
     created_by_student_id: Optional[UUID] = Field(default=None)
