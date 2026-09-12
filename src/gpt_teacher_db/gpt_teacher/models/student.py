@@ -1,12 +1,10 @@
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
-from sqlalchemy import Column, Enum as SAEnum
 from sqlmodel import Field, Relationship
 
 from gpt_teacher_db.gpt_teacher.core import BaseModelGPTTeacher_, SQLModelGPTTeacher
-from gpt_teacher_db.gpt_teacher.enum import TeachingMethodology
-from gpt_teacher_db.gpt_teacher.metadata import DEFAULT_SCHEMA_NAME, STUDENT_TABLE
+from gpt_teacher_db.gpt_teacher.metadata import STUDENT_TABLE
 
 if TYPE_CHECKING:
     from gpt_teacher_db.gpt_teacher.models.classroom_student import ClassroomStudent
@@ -21,7 +19,6 @@ class StudentBase(SQLModelGPTTeacher):
     email: str = Field(max_length=255)
     name: str = Field(max_length=255)
     registration_number: Optional[str] = Field(default=None, max_length=50)
-    methodology: TeachingMethodology = Field(default=TeachingMethodology.SOCRATIC)
 
 
 class Student(StudentBase, BaseModelGPTTeacher_, table=True):
@@ -31,13 +28,6 @@ class Student(StudentBase, BaseModelGPTTeacher_, table=True):
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     hashed_password: str = Field(max_length=255, nullable=False)
-    methodology: TeachingMethodology = Field(
-        sa_column=Column(
-            SAEnum(TeachingMethodology, schema=DEFAULT_SCHEMA_NAME),
-            default=TeachingMethodology.SOCRATIC,
-            nullable=False,
-        ),
-    )
 
     # Relationships
     classroom_students: list["ClassroomStudent"] = Relationship(
@@ -64,7 +54,6 @@ class StudentUpdate(SQLModelGPTTeacher):
     name: Optional[str] = Field(default=None, max_length=255)
     registration_number: Optional[str] = Field(default=None, max_length=50)
     password: Optional[str] = Field(default=None, min_length=8)
-    methodology: Optional[TeachingMethodology] = Field(default=None)
 
 
 # Properties to return via API
