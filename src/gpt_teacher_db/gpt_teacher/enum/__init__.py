@@ -1,8 +1,8 @@
 # Enums package
 # Add your enums here
 from enum import Enum
-
 from gpt_teacher_db.gpt_teacher.enum.message_type import MessageType
 from gpt_teacher_db.gpt_teacher.enum.session_status import SessionStatus
+from gpt_teacher_db.gpt_teacher.enum.teaching_methodology import TeachingMethodology
 
-__all__ = ["SessionStatus", "MessageType"]
+__all__ = ["SessionStatus", "MessageType", "TeachingMethodology"]
